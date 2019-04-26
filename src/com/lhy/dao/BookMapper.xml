@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  <mapper namespace="com.lhy.dao.BookMapper">
+  
+  <!-- 手动映射查询结果 -->
+	<resultMap type="book" id="books">
+		<id column="id" property="id"/>
+		<result column="name" property="name"/>
+		<result column="price" property="price"/>
+		<result column="writer" property="writer"/>
+		<result column="describtion" property="describtion"/>
+		<result column="cname" property="categoryBook.cname"/>
+	</resultMap>
+	
+  <!-- 查询所有 -->
+     <select id="selectBook" parameterType="fenye" resultMap="books">
+		SELECT b.id,b.name,b.price,b.writer,b.describtion,c.cname from book b,categoryBook c 
+		<where>
+		  <if test="sousuo.bname!=null and sousuo.bname!=''">
+		     and name like "%"#{sousuo.bname}"%"
+		  </if>
+		  <if test="sousuo.startPrice!=null and sousuo.startPrice!=''">
+		     and price&gt;=#{sousuo.startPrice}
+		  </if>
+		  <if test="sousuo.endPrice!=null and sousuo.endPrice!=''">
+		     and price&lt;=#{sousuo.endPrice}
+		  </if>
+		  
+		  <if test="sousuo.categroyId !=null and sousuo.categroyId !=''">
+					and c.categroyId=#{sousuo.categroyId}
+		  </if>
+		     and b.categroyId=c.categroyId
+		</where> 
+		  limit #{page},#{pageSize} 
+	</select>
+	<!-- 查询总条数 -->
+	<select id="selectBookCount" parameterType="fenye" resultType="int">
+		SELECT COUNT(id) from book b,categoryBook c
+		<where>
+		     <if test="sousuo.bname!=null and sousuo.bname!=''">
+		     and name like "%"#{sousuo.bname}"%"
+		  </if>
+		  <if test="sousuo.startPrice!=null and sousuo.startPrice!=''">
+		     and price&gt;=#{sousuo.startPrice}
+		  </if>
+		  <if test="sousuo.endPrice!=null and sousuo.endPrice!=''">
+		     and price&lt;=#{sousuo.endPrice}
+		  </if>
+		  
+		  <if test="sousuo.categroyId !=null and sousuo.categroyId !=''">
+					and c.categroyId=#{sousuo.categroyId}
+		  </if> 
+		     and b.categroyId=c.categroyId
+		</where>
+	</select> 
+	<!-- 查询分类 -->
+	 <select id="selectCategoryBook" resultType="CategoryBook">
+	   select * from categoryBook
+	 </select>
+	
+  </mapper>
